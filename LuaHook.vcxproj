@@ -1,0 +1,206 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|ARM">
+      <Configuration>Debug</Configuration>
+      <Platform>ARM</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|ARM">
+      <Configuration>Release</Configuration>
+      <Platform>ARM</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|ARM64">
+      <Configuration>Debug</Configuration>
+      <Platform>ARM64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|ARM64">
+      <Configuration>Release</Configuration>
+      <Platform>ARM64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x86">
+      <Configuration>Debug</Configuration>
+      <Platform>x86</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x86">
+      <Configuration>Release</Configuration>
+      <Platform>x86</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="jni\3rd\lua-5.3.3\jni\lapi.c" />
+    <ClCompile Include="jni\3rd\lua-5.3.3\jni\lauxlib.c" />
+    <ClCompile Include="jni\3rd\lua-5.3.3\jni\lbaselib.c" />
+    <ClCompile Include="jni\3rd\lua-5.3.3\jni\lbitlib.c" />
+    <ClCompile Include="jni\3rd\lua-5.3.3\jni\lcode.c" />
+    <ClCompile Include="jni\3rd\lua-5.3.3\jni\lcorolib.c" />
+    <ClCompile Include="jni\3rd\lua-5.3.3\jni\lctype.c" />
+    <ClCompile Include="jni\3rd\lua-5.3.3\jni\ldblib.c" />
+    <ClCompile Include="jni\3rd\lua-5.3.3\jni\ldebug.c" />
+    <ClCompile Include="jni\3rd\lua-5.3.3\jni\ldo.c" />
+    <ClCompile Include="jni\3rd\lua-5.3.3\jni\ldump.c" />
+    <ClCompile Include="jni\3rd\lua-5.3.3\jni\lfunc.c" />
+    <ClCompile Include="jni\3rd\lua-5.3.3\jni\lgc.c" />
+    <ClCompile Include="jni\3rd\lua-5.3.3\jni\linit.c" />
+    <ClCompile Include="jni\3rd\lua-5.3.3\jni\liolib.c" />
+    <ClCompile Include="jni\3rd\lua-5.3.3\jni\llex.c" />
+    <ClCompile Include="jni\3rd\lua-5.3.3\jni\lmathlib.c" />
+    <ClCompile Include="jni\3rd\lua-5.3.3\jni\lmem.c" />
+    <ClCompile Include="jni\3rd\lua-5.3.3\jni\loadlib.c" />
+    <ClCompile Include="jni\3rd\lua-5.3.3\jni\lobject.c" />
+    <ClCompile Include="jni\3rd\lua-5.3.3\jni\lopcodes.c" />
+    <ClCompile Include="jni\3rd\lua-5.3.3\jni\loslib.c" />
+    <ClCompile Include="jni\3rd\lua-5.3.3\jni\lparser.c" />
+    <ClCompile Include="jni\3rd\lua-5.3.3\jni\lstate.c" />
+    <ClCompile Include="jni\3rd\lua-5.3.3\jni\lstring.c" />
+    <ClCompile Include="jni\3rd\lua-5.3.3\jni\lstrlib.c" />
+    <ClCompile Include="jni\3rd\lua-5.3.3\jni\ltable.c" />
+    <ClCompile Include="jni\3rd\lua-5.3.3\jni\ltablib.c" />
+    <ClCompile Include="jni\3rd\lua-5.3.3\jni\ltm.c" />
+    <ClCompile Include="jni\3rd\lua-5.3.3\jni\lua.c" />
+    <ClCompile Include="jni\3rd\lua-5.3.3\jni\luac.c" />
+    <ClCompile Include="jni\3rd\lua-5.3.3\jni\lundump.c" />
+    <ClCompile Include="jni\3rd\lua-5.3.3\jni\lutf8lib.c" />
+    <ClCompile Include="jni\3rd\lua-5.3.3\jni\lvm.c" />
+    <ClCompile Include="jni\3rd\lua-5.3.3\jni\lzio.c" />
+    <ClCompile Include="jni\core\armhook.cpp" />
+    <ClCompile Include="jni\core\common-help.cpp" />
+    <ClCompile Include="jni\core\lua-loader.cpp" />
+    <ClCompile Include="jni\core\md5.cpp" />
+    <ClCompile Include="jni\core\proto.cpp" />
+    <ClCompile Include="jni\core\special-hook.cpp" />
+    <ClCompile Include="jni\core\ue.cpp" />
+    <ClCompile Include="jni\injector\android-injector.cpp" />
+    <ClCompile Include="jni\injector\injector.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="jni\3rd\lua-5.3.3\jni\lapi.h" />
+    <ClInclude Include="jni\3rd\lua-5.3.3\jni\lauxlib.h" />
+    <ClInclude Include="jni\3rd\lua-5.3.3\jni\lcode.h" />
+    <ClInclude Include="jni\3rd\lua-5.3.3\jni\lctype.h" />
+    <ClInclude Include="jni\3rd\lua-5.3.3\jni\ldebug.h" />
+    <ClInclude Include="jni\3rd\lua-5.3.3\jni\ldo.h" />
+    <ClInclude Include="jni\3rd\lua-5.3.3\jni\lfunc.h" />
+    <ClInclude Include="jni\3rd\lua-5.3.3\jni\lgc.h" />
+    <ClInclude Include="jni\3rd\lua-5.3.3\jni\llex.h" />
+    <ClInclude Include="jni\3rd\lua-5.3.3\jni\llimits.h" />
+    <ClInclude Include="jni\3rd\lua-5.3.3\jni\lmem.h" />
+    <ClInclude Include="jni\3rd\lua-5.3.3\jni\lobject.h" />
+    <ClInclude Include="jni\3rd\lua-5.3.3\jni\lopcodes.h" />
+    <ClInclude Include="jni\3rd\lua-5.3.3\jni\lparser.h" />
+    <ClInclude Include="jni\3rd\lua-5.3.3\jni\lprefix.h" />
+    <ClInclude Include="jni\3rd\lua-5.3.3\jni\lstate.h" />
+    <ClInclude Include="jni\3rd\lua-5.3.3\jni\lstring.h" />
+    <ClInclude Include="jni\3rd\lua-5.3.3\jni\ltable.h" />
+    <ClInclude Include="jni\3rd\lua-5.3.3\jni\ltm.h" />
+    <ClInclude Include="jni\3rd\lua-5.3.3\jni\lua.h" />
+    <ClInclude Include="jni\3rd\lua-5.3.3\jni\lua.hpp" />
+    <ClInclude Include="jni\3rd\lua-5.3.3\jni\luaconf.h" />
+    <ClInclude Include="jni\3rd\lua-5.3.3\jni\lualib.h" />
+    <ClInclude Include="jni\3rd\lua-5.3.3\jni\lundump.h" />
+    <ClInclude Include="jni\3rd\lua-5.3.3\jni\lvm.h" />
+    <ClInclude Include="jni\3rd\lua-5.3.3\jni\lzio.h" />
+    <ClInclude Include="jni\include\core\armhook.h" />
+    <ClInclude Include="jni\include\core\common-help.h" />
+    <ClInclude Include="jni\include\core\logger.h" />
+    <ClInclude Include="jni\include\core\md5.h" />
+    <ClInclude Include="jni\include\core\special-hook.h" />
+    <ClInclude Include="jni\include\core\ue.h" />
+    <ClInclude Include="jni\injector\android-injector.h" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{787cb003-9059-42ac-a02d-6c97bd52afd6}</ProjectGuid>
+    <Keyword>Android</Keyword>
+    <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
+    <ApplicationType>Android</ApplicationType>
+    <ApplicationTypeRevision>1.0</ApplicationTypeRevision>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>Clang_3_6</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>Clang_3_6</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>Clang_3_6</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>Clang_3_6</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>Clang_3_6</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>Clang_3_6</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>Clang_3_6</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>Clang_3_6</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings" />
+  <ImportGroup Label="Shared" />
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
+    <NMakeIncludeSearchPath>$(ProjectDir)jni\include;$(ProjectDir)jni\3rd\lua-5.3.3\jni;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets" />
+</Project>
