@@ -528,6 +528,63 @@ static int lua_read_string(lua_State *l)
 	return 1;
 }
 
+static int lua_write_wstring(lua_State *l)
+{
+	if (lua_gettop(l) != 2)
+		return 1;
+
+	if (!luaL_checkinteger(l, 1))
+		return 1;
+
+	if (!luaL_checkstring(l, 2))
+		return 1;
+
+	int addr = lua_tointeger(l, 1);
+	const char *value = lua_tostring(l, 2);
+	if (addr)
+	{
+		wchar_t sztmp[256] = { 0x00 };
+		mbstowcs(sztmp, value, 256);
+		wcscpy((wchar_t *)addr, sztmp);
+	}
+	return 1;
+}
+
+static int lua_read_wstring(lua_State *l)
+{
+	if (lua_gettop(l) != 1)
+		return 1;
+
+	if (!luaL_checkinteger(l, 1))
+		return 1;
+
+
+	int addr = lua_tointeger(l, 1);
+	if (addr)
+	{
+		char sztmp[256] = { 0x00 };
+		wcstombs(sztmp, (wchar_t *)addr, 256);
+		lua_pushstring(l, sztmp);
+	}
+	return 1;
+}
+
+static int lua_get_wstring_len(lua_State *l)
+{
+	if (lua_gettop(l) != 1)
+		return 1;
+
+	if (!luaL_checkinteger(l, 1))
+		return 1;
+
+
+	int addr = lua_tointeger(l, 1);
+	if (addr)
+	{
+		lua_pushinteger(l, wcslen((wchar_t *)addr));
+	}
+	return 1;
+}
 
 
 /***************ctor*******************/
@@ -554,6 +611,9 @@ static const luaL_Reg XLUA[] =
 	{ "rint", lua_read_int },
 	{ "wstr", lua_write_string },
 	{ "rstr", lua_read_string },
+	{ "wwstr", lua_write_wstring },
+	{ "rwstr", lua_read_wstring },
+	{ "wslen", lua_get_wstring_len },
 	{ 0, 0 }
 };
 
