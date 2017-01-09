@@ -454,6 +454,82 @@ static int lua_search_property(lua_State *l)
 	return 1;
 }
 
+static int lua_write_int(lua_State *l)
+{
+	if (lua_gettop(l) != 2)
+		return 1;
+
+	if (!luaL_checkinteger(l, 1))
+		return 1;
+
+	if (!luaL_checkinteger(l, 2))
+		return 1;
+
+	int addr = lua_tointeger(l, 1);
+	int value = lua_tointeger(l, 2);
+	if (addr)
+	{
+		*(int *)addr = value;
+	}
+	return 1;
+}
+
+static int lua_read_int(lua_State *l)
+{
+	if (lua_gettop(l) != 1)
+		return 1;
+
+	if (!luaL_checkinteger(l, 1))
+		return 1;
+
+
+	int addr = lua_tointeger(l, 1);
+	if (addr)
+	{
+		lua_pushinteger(l, *(int *)addr);
+	}
+	return 1;
+}
+
+static int lua_write_string(lua_State *l)
+{
+	if (lua_gettop(l) != 2)
+		return 1;
+
+	if (!luaL_checkinteger(l, 1))
+		return 1;
+
+	if (!luaL_checkstring(l, 2))
+		return 1;
+
+	int addr = lua_tointeger(l, 1);
+	const char *value = lua_tostring(l, 2);
+	if (addr)
+	{
+		strcpy((char *)addr, value);
+	}
+	return 1;
+}
+
+static int lua_read_string(lua_State *l)
+{
+	if (lua_gettop(l) != 1)
+		return 1;
+
+	if (!luaL_checkinteger(l, 1))
+		return 1;
+
+
+	int addr = lua_tointeger(l, 1);
+	if (addr)
+	{
+		lua_pushstring(l, (const char *)addr);
+	}
+	return 1;
+}
+
+
+
 /***************ctor*******************/
 static const luaL_Reg XLUA[] = 
 {
@@ -474,6 +550,10 @@ static const luaL_Reg XLUA[] =
 	{ "s2i", lua_s2i },
 	{ "i2f", lua_i2f },
 	{ "f2i", lua_f2i },
+	{ "wint", lua_write_int },
+	{ "rint", lua_read_int },
+	{ "wstr", lua_write_string },
+	{ "rstr", lua_read_string },
 	{ 0, 0 }
 };
 
