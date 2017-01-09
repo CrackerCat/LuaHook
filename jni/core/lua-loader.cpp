@@ -13,6 +13,8 @@
 #include <core/armhook.h>
 #include <core/common-help.h>
 #include <core/ue.h>
+#include "../3rd/lua-5.3.3/jni/lua.h"
+#include "../3rd/lua-5.3.3/jni/lua.hpp"
 
 using namespace std;
 
@@ -292,8 +294,8 @@ static int lua_i2f(lua_State *l)
 	if (!luaL_checkinteger(l, 1))
 		return 1;
 
-	int i = lua_tointeger(l, 1);
-	lua_pushnumber(l, *(float *)&i);
+	int i = (int)lua_tointeger(l, 1);
+	lua_pushnumber(l, (double)*(float *)&i);
 	return 1;
 }
 
@@ -305,8 +307,8 @@ static int lua_f2i(lua_State *l)
 	if (!luaL_checknumber(l, 1))
 		return 1;
 
-	float d = (float)lua_tonumber(l, 1);
-	lua_pushinteger(l, *(int *)&d);
+	float f = (float)lua_tonumber(l, 1);
+	lua_pushinteger(l, *(int *)&f);
 	return 1;
 }
 
