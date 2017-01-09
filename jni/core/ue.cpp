@@ -179,7 +179,7 @@ long long get_prop_value(int inst, int prop)
 		return *(long long *)addr;
 	}
 
-	if (strcmp(sztmp, "IntProperty") == 0 || strcmp(sztmp, "FloatProperty") == 0 || strcmp(sztmp, "UInt32Property") == 0)
+	if (strcmp(sztmp, "IntProperty") == 0 || strcmp(sztmp, "FloatProperty") == 0 || strcmp(sztmp, "UInt32Property") == 0 || strcmp(sztmp, "ObjectProperty")==0)
 	{
 		return *(int *)addr;
 	}
@@ -219,7 +219,7 @@ void set_prop_value(int inst, int prop, long long value)
 		*(long long *)addr=value;
 	}
 
-	if (strcmp(sztmp, "IntProperty") == 0 || strcmp(sztmp, "FloatProperty") == 0 || strcmp(sztmp, "UInt32Property") == 0)
+	if (strcmp(sztmp, "IntProperty") == 0 || strcmp(sztmp, "FloatProperty") == 0 || strcmp(sztmp, "UInt32Property") == 0 || strcmp(sztmp, "ObjectProperty") == 0)
 	{
 		*(int *)addr = value;
 	}
