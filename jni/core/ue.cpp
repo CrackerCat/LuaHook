@@ -1,9 +1,6 @@
 #include <map>
-#include <vector>
 #include <algorithm>
 #include <dlfcn.h>
-#include <pthread.h>
-#include <wchar.h>
 #include <core/common-help.h>
 #include <core/ue.h>
 #include <core/logger.h>

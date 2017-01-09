@@ -36,7 +36,6 @@ LOCAL_C_INCLUDES		:= $(LOCAL_PATH)/include/ $(LOCAL_PATH)/3rd/lua-5.3.3/jni
 LOCAL_SRC_FILES			:= \
 						core\armhook.cpp \
 						core\common-help.cpp \
-						core\proto.cpp \
 						core\ue.cpp \
 						core\md5.cpp \
 						core\lua-loader.cpp \
