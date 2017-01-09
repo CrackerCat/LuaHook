@@ -104,7 +104,7 @@ static int lua_call_function(lua_State* l)
 	if (argv < 1)
 		return 1;
 
-	if (!luaL_checkinteger(l, 1))
+	if (!luaL_checknumber(l, 1))
 		return 1;
 
 	void *addr = (void *)lua_tointeger(l, 1);
@@ -182,7 +182,7 @@ static int lua_hook(lua_State* l)
 	if (lua_gettop(l) != 2)
 		return 1;
 
-	if (!luaL_checkinteger(l, 1))
+	if (!luaL_checknumber(l, 1))
 		return 1;
 
 	if (!luaL_checkstring(l, 2))
@@ -200,7 +200,7 @@ static int lua_unhook(lua_State* l)
 	if (lua_gettop(l) != 2)
 		return 1;
 
-	if (!luaL_checkinteger(l, 1))
+	if (!luaL_checknumber(l, 1))
 		return 1;
 
 	void *addr = (void *)lua_tointeger(l, 1);
@@ -220,7 +220,7 @@ static int lua_set_argv(lua_State *l)
 	if (lua_gettop(l)!=1)
 		return 1;
 
-	if (!luaL_checkinteger(l, 1))
+	if (!luaL_checknumber(l, 1))
 		return 1;
 
 	lua_argv = lua_tointeger(l, 1);
@@ -250,10 +250,10 @@ static int lua_dump(lua_State *l)
 	if (lua_gettop(l) != 2)
 		return 1;
 
-	if (!luaL_checkinteger(l, 1))
+	if (!luaL_checknumber(l, 1))
 		return 1;
 
-	if (!luaL_checkinteger(l, 2))
+	if (!luaL_checknumber(l, 2))
 		return 1;
 
 	void *addr = (void *)lua_tointeger(l, 1);
@@ -267,7 +267,7 @@ static int lua_i2s(lua_State *l)
 	if (lua_gettop(l) != 1)
 		return 1;
 	
-	if (!luaL_checkinteger(l, 1))
+	if (!luaL_checknumber(l, 1))
 		return 1;
 
 	lua_pushstring(l, (char *)lua_tointeger(l, 1));
@@ -291,7 +291,7 @@ static int lua_i2f(lua_State *l)
 	if (lua_gettop(l) != 1)
 		return 1;
 
-	if (!luaL_checkinteger(l, 1))
+	if (!luaL_checknumber(l, 1))
 		return 1;
 
 	int i = (int)lua_tointeger(l, 1);
@@ -317,7 +317,7 @@ static int lua_get_obj_name(lua_State *l)
 	if (lua_gettop(l) != 1)
 		return 1;
 
-	if (!luaL_checkinteger(l, 1))
+	if (!luaL_checknumber(l, 1))
 		return 1;
 
 	char name[256] = { 0x00 };
@@ -332,7 +332,7 @@ static int lua_get_obj_type(lua_State *l)
 	if (lua_gettop(l) != 1)
 		return 1;
 
-	if (!luaL_checkinteger(l, 1))
+	if (!luaL_checknumber(l, 1))
 		return 1;
 
 	int obj = lua_tointeger(l, 1);
@@ -346,7 +346,7 @@ static int lua_get_type_inst(lua_State *l)
 	if (lua_gettop(l) != 1)
 		return 1;
 
-	if (!luaL_checkinteger(l, 1))
+	if (!luaL_checknumber(l, 1))
 		return 1;
 
 	vector<int> vec_inst;
@@ -367,7 +367,7 @@ static int lua_get_inner_obj(lua_State *l)
 	if (lua_gettop(l) != 1)
 		return 1;
 
-	if (!luaL_checkinteger(l, 1))
+	if (!luaL_checknumber(l, 1))
 		return 1;
 
 	vector<int> vec_inner_obj;
@@ -388,7 +388,7 @@ static int lua_get_super_class(lua_State *l)
 	if (lua_gettop(l) != 1)
 		return 1;
 
-	if (!luaL_checkinteger(l, 1))
+	if (!luaL_checknumber(l, 1))
 		return 1;
 
 	vector<int> vec_super_class;
@@ -411,10 +411,10 @@ static int lua_property_value(lua_State *l)
 	// get
 	if (argc==2)
 	{
-		if (!luaL_checkinteger(l, 1))
+		if (!luaL_checknumber(l, 1))
 			return 1;
 
-		if (!luaL_checkinteger(l, 2))
+		if (!luaL_checknumber(l, 2))
 			return 1;
 
 		lua_pushinteger(l, get_prop_value(lua_tointeger(l, 1), lua_tointeger(l, 2)));
@@ -423,13 +423,13 @@ static int lua_property_value(lua_State *l)
 	// set
 	if (argc==3)
 	{
-		if (!luaL_checkinteger(l, 1))
+		if (!luaL_checknumber(l, 1))
 			return 1;
 
-		if (!luaL_checkinteger(l, 2))
+		if (!luaL_checknumber(l, 2))
 			return 1;
 
-		if (!luaL_checkinteger(l, 3))
+		if (!luaL_checknumber(l, 3))
 			return 1;
 
 		set_prop_value(lua_tointeger(l, 1), lua_tointeger(l, 2), lua_tointeger(l, 3));
@@ -444,7 +444,7 @@ static int lua_search_property(lua_State *l)
 	if (lua_gettop(l) != 2)
 		return 1;
 
-	if (!luaL_checkinteger(l, 1))
+	if (!luaL_checknumber(l, 1))
 		return 1;
 	 
 	if (!luaL_checkstring(l, 2))
@@ -459,10 +459,10 @@ static int lua_write_int(lua_State *l)
 	if (lua_gettop(l) != 2)
 		return 1;
 
-	if (!luaL_checkinteger(l, 1))
+	if (!luaL_checknumber(l, 1))
 		return 1;
 
-	if (!luaL_checkinteger(l, 2))
+	if (!luaL_checknumber(l, 2))
 		return 1;
 
 	int addr = lua_tointeger(l, 1);
@@ -479,7 +479,7 @@ static int lua_read_int(lua_State *l)
 	if (lua_gettop(l) != 1)
 		return 1;
 
-	if (!luaL_checkinteger(l, 1))
+	if (!luaL_checknumber(l, 1))
 		return 1;
 
 
