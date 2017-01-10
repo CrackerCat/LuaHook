@@ -521,9 +521,7 @@ static int lua_write_wstring(lua_State *l)
 	const char *value = luaL_checkstring(l, 2);
 	if (addr)
 	{
-		wchar_t sztmp[256] = { 0x00 };
-		mbstowcs(sztmp, value, 256);
-		wcscpy((wchar_t *)addr, sztmp);
+		mbstowcs((wchar_t *)addr, value, strlen(value));
 	}
 	return 1;
 }
@@ -536,9 +534,12 @@ static int lua_read_wstring(lua_State *l)
 	int addr = luaL_checkinteger(l, 1);
 	if (addr)
 	{
-		char sztmp[256] = { 0x00 };
-		wcstombs(sztmp, (wchar_t *)addr, 256);
+		int len = wcslen((wchar_t *)addr) * 4;
+		char *sztmp = (char *)malloc(len+1);
+		memset(sztmp, 0x00, len + 1);
+		wcstombs(sztmp, (wchar_t *)addr, len);
 		lua_pushstring(l, sztmp);
+		free(sztmp);
 	}
 	return 1;
 }
