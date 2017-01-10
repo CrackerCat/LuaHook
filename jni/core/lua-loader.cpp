@@ -377,7 +377,34 @@ static int lua_search_property(lua_State *l)
 	return 1;
 }
 
-static int lua_write_int(lua_State *l)
+static int lua_write_int64(lua_State *l)
+{
+	if (lua_gettop(l) != 2)
+		return 1;
+
+	int addr = luaL_checkinteger(l, 1);
+	long long value = luaL_checkinteger(l, 2);
+	if (addr)
+	{
+		*(long long *)addr = value;
+	}
+	return 1;
+}
+
+static int lua_read_int64(lua_State *l)
+{
+	if (lua_gettop(l) != 1)
+		return 1;
+
+	int addr = luaL_checkinteger(l, 1);
+	if (addr)
+	{
+		lua_pushinteger(l, *(long long *)addr);
+	}
+	return 1;
+}
+
+static int lua_write_int32(lua_State *l)
 {
 	if (lua_gettop(l) != 2)
 		return 1;
@@ -391,7 +418,7 @@ static int lua_write_int(lua_State *l)
 	return 1;
 }
 
-static int lua_read_int(lua_State *l)
+static int lua_read_int32(lua_State *l)
 {
 	if (lua_gettop(l) != 1)
 		return 1;
@@ -400,6 +427,60 @@ static int lua_read_int(lua_State *l)
 	if (addr)
 	{
 		lua_pushinteger(l, *(int *)addr);
+	}
+	return 1;
+}
+
+static int lua_write_int16(lua_State *l)
+{
+	if (lua_gettop(l) != 2)
+		return 1;
+
+	int addr = luaL_checkinteger(l, 1);
+	int value = luaL_checkinteger(l, 2);
+	if (addr)
+	{
+		*(short *)addr = value;
+	}
+	return 1;
+}
+
+static int lua_read_int16(lua_State *l)
+{
+	if (lua_gettop(l) != 1)
+		return 1;
+
+	int addr = luaL_checkinteger(l, 1);
+	if (addr)
+	{
+		lua_pushinteger(l, *(short *)addr);
+	}
+	return 1;
+}
+
+static int lua_write_int8(lua_State *l)
+{
+	if (lua_gettop(l) != 2)
+		return 1;
+
+	int addr = luaL_checkinteger(l, 1);
+	int value = luaL_checkinteger(l, 2);
+	if (addr)
+	{
+		*(char *)addr = value;
+	}
+	return 1;
+}
+
+static int lua_read_int8(lua_State *l)
+{
+	if (lua_gettop(l) != 1)
+		return 1;
+
+	int addr = luaL_checkinteger(l, 1);
+	if (addr)
+	{
+		lua_pushinteger(l, *(char *)addr);
 	}
 	return 1;
 }
@@ -496,8 +577,14 @@ static const luaL_Reg XLUA[] =
 	{ "s2i", lua_s2i },
 	{ "i2f", lua_i2f },
 	{ "f2i", lua_f2i },
-	{ "wint", lua_write_int },
-	{ "rint", lua_read_int },
+	{ "wint64", lua_write_int64 },
+	{ "rint64", lua_read_int64 },
+	{ "wint", lua_write_int32 },
+	{ "rint", lua_read_int32 },
+	{ "wint16", lua_write_int16 },
+	{ "rint16", lua_read_int16 },
+	{ "wint8", lua_write_int8 },
+	{ "rint8", lua_read_int8 },
 	{ "wstr", lua_write_string },
 	{ "rstr", lua_read_string },
 	{ "wwstr", lua_write_wstring },
