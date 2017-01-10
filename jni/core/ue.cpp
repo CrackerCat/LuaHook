@@ -109,60 +109,6 @@ void get_type_inst(int type, vector<int> &vec_inst)
 	}
 }
 
-int search_prop(int inst, const char *prop_name)
-{
-	// build outer map
-	map<int, vector<int> > dic_outer;
-	int objs_array = get_objs_addr(g_objs);
-	if (objs_array)
-	{
-		FUObjectItem *objs = *(FUObjectItem **)objs_array;
-		int num = *(int *)(objs_array + 8);
-		for (int i = 0; i < num; i++)
-		{
-			int obj = (int)objs[i].Object;
-			if (obj)
-			{
-				int outer = (int)objs[i].Object->OuterPrivate;
-				if (outer)
-				{
-					if (dic_outer.find(outer) == dic_outer.end())
-					{
-						vector<int> node;
-						dic_outer[outer] = node;
-					}
-					dic_outer[outer].push_back(obj);
-				}
-			}
-		}
-	}
-
-	// search
-	if (inst)
-	{
-		vector<int> vec_super;
-		get_super_class(get_obj_type(inst), vec_super);
-		for (int i = 0; i < vec_super.size(); i++)
-		{
-			map<int, vector<int> >::iterator itr = dic_outer.find(vec_super[i]);
-			if (itr != dic_outer.end())
-			{
-				for (int j = 0; j < itr->second.size(); j++)
-				{
-					char sztmp[256] = { 0x00 };
-					get_obj_name(itr->second[j], sztmp, 256);
-					if (strcmp(sztmp, prop_name) == 0)
-					{
-						return itr->second[j];
-					}
-				}
-			}
-		}
-	}
-
-	return 0;
-}
-
 long long get_prop_value(int inst, int prop)
 {
 	if (!inst || !prop)

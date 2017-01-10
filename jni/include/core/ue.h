@@ -144,4 +144,3 @@ void get_inner_obj(int obj, vector<int>& vec_inner_obj);
 void get_super_class(int type, vector<int>& vec_super_class);
 long long get_prop_value(int obj, int prop_obj);
 void set_prop_value(int inst, int prop, long long value);
-int search_prop(int inst, const char *prop_name);

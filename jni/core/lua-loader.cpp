@@ -368,15 +368,6 @@ static int lua_property_value(lua_State *l)
 	return 1;
 }
 
-static int lua_search_property(lua_State *l)
-{
-	if (lua_gettop(l) != 2)
-		return 1;
-
-	lua_pushinteger(l, search_prop(luaL_checkinteger(l, 1), luaL_checkstring(l, 2)));
-	return 1;
-}
-
 static int lua_write_int64(lua_State *l)
 {
 	if (lua_gettop(l) != 2)
@@ -573,7 +564,6 @@ static const luaL_Reg XLUA[] =
 	{ "inner", lua_get_inner_obj },
 	{ "super", lua_get_super_class },
 	{ "value", lua_property_value },
-	{ "search", lua_search_property },
 	{ "i2s", lua_i2s },
 	{ "s2i", lua_s2i },
 	{ "i2f", lua_i2f },
