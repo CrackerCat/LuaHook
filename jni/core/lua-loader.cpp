@@ -283,6 +283,18 @@ static int lua_get_obj_name(lua_State *l)
 	return 1;
 }
 
+static int lua_get_fname(lua_State *l)
+{
+	if (lua_gettop(l) != 1)
+		return 1;
+
+	char name[256] = { 0x00 };
+	long long fname = luaL_checkinteger(l, 1);
+	get_fname_name(fname, name, 256);
+	lua_pushstring(l, name);
+	return 1;
+}
+
 static int lua_get_obj_type(lua_State *l)
 {
 	if (lua_gettop(l) != 1)
@@ -312,23 +324,6 @@ static int lua_get_type_inst(lua_State *l)
 	return 1;
 }
 
-static int lua_get_inner_obj(lua_State *l)
-{
-	if (lua_gettop(l) != 1)
-		return 1;
-
-	vector<int> vec_inner_obj;
-	int type = luaL_checkinteger(l, 1);
-	get_inner_obj(type, vec_inner_obj);
-
-	lua_newtable(l);
-	for (int i = 0; i < vec_inner_obj.size(); i++)
-	{
-		lua_pushinteger(l, vec_inner_obj[i]);
-		lua_rawseti(l, -2, i+1);
-	}
-	return 1;
-}
 
 static int lua_get_super_class(lua_State *l)
 {
@@ -348,21 +343,89 @@ static int lua_get_super_class(lua_State *l)
 	return 1;
 }
 
-static int lua_property_value(lua_State *l)
+static int lua_get_properties(lua_State *l)
 {
-	int argc = lua_gettop(l);
+	if (lua_gettop(l) != 1)
+		return 1;
 
-	// get
-	if (argc==2)
+	vector<int> vec_props;
+	get_class_props(luaL_checkinteger(l, 1), vec_props);
+
+	lua_newtable(l);
+	for (int i=0; i<vec_props.size(); i++)
 	{
-		lua_pushinteger(l, get_prop_value(luaL_checkinteger(l, 1), luaL_checkinteger(l, 2)));
+		lua_pushinteger(l, vec_props[i]);
+		lua_rawseti(l, -2, i);
 	}
-	
-	// set
-	if (argc==3)
+
+	return 1;
+}
+
+static int lua_get_property_offset(lua_State *l)
+{
+	if (lua_gettop(l) != 1)
+		return 1;
+
+	int prop = luaL_checkinteger(l, 1);
+	if (prop)
 	{
-		set_prop_value(luaL_checkinteger(l, 1), luaL_checkinteger(l, 2), luaL_checkinteger(l, 3));
-		lua_pushboolean(l, 1);
+		lua_pushinteger(l, get_prop_offset(prop));
+	}
+
+	return 1;
+}
+
+static int lua_get_property_struct(lua_State *l)
+{
+	if (lua_gettop(l) != 1)
+		return 1;
+
+	int prop = luaL_checkinteger(l, 1);
+	if (prop)
+	{
+		lua_pushinteger(l, get_struct_prop(prop));
+	}
+
+	return 1;
+}
+
+static int lua_get_property_array(lua_State *l)
+{
+	if (lua_gettop(l) != 1)
+		return 1;
+
+	int prop = luaL_checkinteger(l, 1);
+	if (prop)
+	{
+		lua_pushinteger(l, get_array_prop(prop));
+	}
+
+	return 1;
+}
+
+static int lua_get_property_arraydim(lua_State *l)
+{
+	if (lua_gettop(l) != 1)
+		return 1;
+
+	int prop = luaL_checkinteger(l, 1);
+	if (prop)
+	{
+		lua_pushinteger(l, get_prop_array_dim(prop));
+	}
+
+	return 1;
+}
+
+static int lua_get_property_elemsize(lua_State *l)
+{
+	if (lua_gettop(l) != 1)
+		return 1;
+
+	int prop = luaL_checkinteger(l, 1);
+	if (prop)
+	{
+		lua_pushinteger(l, get_prop_elem_size(prop));
 	}
 
 	return 1;
@@ -395,6 +458,33 @@ static int lua_read_int64(lua_State *l)
 	return 1;
 }
 
+static int lua_write_double(lua_State *l)
+{
+	if (lua_gettop(l) != 2)
+		return 1;
+
+	int addr = luaL_checkinteger(l, 1);
+	double value = luaL_checknumber(l, 2);
+	if (addr)
+	{
+		*(double *)addr = value;
+	}
+	return 1;
+}
+
+static int lua_read_double(lua_State *l)
+{
+	if (lua_gettop(l) != 1)
+		return 1;
+
+	int addr = luaL_checkinteger(l, 1);
+	if (addr)
+	{
+		lua_pushnumber(l, *(double *)addr);
+	}
+	return 1;
+}
+
 static int lua_write_int32(lua_State *l)
 {
 	if (lua_gettop(l) != 2)
@@ -418,6 +508,33 @@ static int lua_read_int32(lua_State *l)
 	if (addr)
 	{
 		lua_pushinteger(l, *(int *)addr);
+	}
+	return 1;
+}
+
+static int lua_write_float(lua_State *l)
+{
+	if (lua_gettop(l) != 2)
+		return 1;
+
+	int addr = luaL_checkinteger(l, 1);
+	float value = luaL_checknumber(l, 2);
+	if (addr)
+	{
+		*(float *)addr = value;
+	}
+	return 1;
+}
+
+static int lua_read_float(lua_State *l)
+{
+	if (lua_gettop(l) != 1)
+		return 1;
+
+	int addr = luaL_checkinteger(l, 1);
+	if (addr)
+	{
+		lua_pushnumber(l, (double)*(float *)addr);
 	}
 	return 1;
 }
@@ -472,6 +589,35 @@ static int lua_read_int8(lua_State *l)
 	if (addr)
 	{
 		lua_pushinteger(l, *(char *)addr);
+	}
+	return 1;
+}
+
+static int lua_write_bool(lua_State *l)
+{
+	if (lua_gettop(l) != 3)
+		return 1;
+
+	int prop = luaL_checkinteger(l, 1);
+	int addr = luaL_checkinteger(l, 2);
+	char value = luaL_checkinteger(l, 3);
+	if (addr && prop)
+	{
+		set_bool_prop_value(prop, addr, value);
+	}
+	return 1;
+}
+
+static int lua_read_bool(lua_State *l)
+{
+	if (lua_gettop(l) != 2)
+		return 1;
+
+	int prop = luaL_checkinteger(l, 1);
+	int addr = luaL_checkinteger(l, 2);
+	if (prop && addr)
+	{
+		lua_pushinteger(l, get_bool_prop_value(prop, addr));
 	}
 	return 1;
 }
@@ -559,23 +705,34 @@ static const luaL_Reg XLUA[] =
 	{ "dlsym", lua_get_addr },
 	{ "dump", lua_dump },
 	{ "name", lua_get_obj_name },
+	{ "fname", lua_get_fname },
 	{ "type", lua_get_obj_type },
 	{ "inst", lua_get_type_inst },
-	{ "inner", lua_get_inner_obj },
 	{ "super", lua_get_super_class },
-	{ "value", lua_property_value },
+	{ "props", lua_get_properties },
+	{ "offset", lua_get_property_offset },
+	{ "struct", lua_get_property_struct },
+	{ "array", lua_get_property_array },
+	{ "arraydim", lua_get_property_arraydim },
+	{ "elemsize", lua_get_property_elemsize },
 	{ "i2s", lua_i2s },
 	{ "s2i", lua_s2i },
 	{ "i2f", lua_i2f },
 	{ "f2i", lua_f2i },
 	{ "wint64", lua_write_int64 },
 	{ "rint64", lua_read_int64 },
-	{ "wint", lua_write_int32 },
-	{ "rint", lua_read_int32 },
+	{ "wdouble", lua_write_double },
+	{ "rdouble", lua_read_double },
+	{ "wint32", lua_write_int32 },
+	{ "rint32", lua_read_int32 },
+	{ "wfloat", lua_write_float },
+	{ "rfloat", lua_read_float },
 	{ "wint16", lua_write_int16 },
 	{ "rint16", lua_read_int16 },
 	{ "wint8", lua_write_int8 },
 	{ "rint8", lua_read_int8 },
+	{ "wbool", lua_write_bool },
+	{ "rbool", lua_read_bool },
 	{ "wstr", lua_write_string },
 	{ "rstr", lua_read_string },
 	{ "wwstr", lua_write_wstring },

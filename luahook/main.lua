@@ -1,3 +1,4 @@
+local ue = require("ue")
 local send = x.dlsym("libUE4.so", "_ZN12GSBaseClient4SendEjPvi")
 local fetch_email = x.dlsym("libUE4.so", "_ZN19GShooterEMailSystem20FetchEmailAttachmentEj")
 local signin = x.dlsym("libUE4.so", "_ZN20GShooterSignInSystem6SignInEjh")
@@ -7,34 +8,15 @@ local search_friend = x.dlsym("libUE4.so", "_ZN20GShooterFriendSystem19SearchFri
 local activity_req = x.dlsym("libUE4.so", "_ZN22GShooterActivitySystem24GetActivityRewardRequestEjh")
 local mission_req = x.dlsym("libUE4.so", "_ZN15GShooterMission24GetLivenessRewardRequestEj")
 local chat_req = x.dlsym("libUE4.so", "_ZN18GShooterChatSystem14SendMsgRequestEN24EGShooterChatChannelType4TypeE7FStringjRK5FTextj")
-local localplayer_spawn = x.dlsym("libUE4.so", "_ZN12ULocalPlayer14SpawnPlayActorERK7FStringRS0_P6UWorld")
-local init_game = x.dlsym("libUE4.so", "_ZN23AGSGameMode_Multiplayer8InitGameERK7FStringS2_RS0_")
+local localplayer_beginplay = x.dlsym("libUE4.so", "_ZN25AGShooterPlayerController9BeginPlayEv")
 
 GSBaseClient = GSBaseClient or nil
 EMailSystem = EMailSystem or nil
 SignInSystem = SignInSystem or nil
 LogicSession = LogicSession or nil
 ActivitySystem = ActivitySystem or nil
-
-function print_prop(class)
-	local super = x.super(class)
-	for k, v in pairs(super) do
-		print("Class: "..x.name(v))
-		local props = x.inner(v)
-		for _, m in pairs(props) do
-			print("		"..x.name(m).." : "..x.name(x.type(m)))
-		end
-	end
-end
-
-function read_fs(fs)
-	return x.rwstr(x.rint(fs))
-end
-
-function write_fs(fs, str)
-	x.wwstr(x.rint(fs), str)
-	x.wint(fs+4, string.len(str)+1)
-end
+LocalPlayer = LocalPlayer or nil
+Attacker = Attacker or nil
 
 function my_send(a1, a2, a3, a4)
 	GSBaseClient = a1
@@ -65,6 +47,7 @@ function my_basepawn_takedamage(a1, a2, a3, a4, a5)
 		a2=x.f2i(99999)
 	end
 	--]]
+	Attacker=a5
 	return x.call(basepawn_takedamage, a1, a2, a3, a4, a5)
 end
 
@@ -75,18 +58,6 @@ function my_purchase(a1, a2,  a3, a4, a5, a6)
 end
 
 function my_search_friend(a1, a2)
-	local req_name_addr = x.rint(a2)
-	local req_name_len = x.rint(a2+4)
-	print(x.rwstr(req_name_addr) .. " len "..req_name_len)
-	
-	local sql_str="';use test;--"
-	x.wwstr(req_name_addr, sql_str)
-	x.wint(a2+4, x.wslen(req_name_addr))
-	
-	req_name_addr = x.rint(a2)
-	req_name_len = x.rint(a2+4)
-	print(x.rwstr(req_name_addr) .. " len "..req_name_len)
-	
 	return x.call(search_friend, a1, a2)
 end
 
@@ -105,14 +76,10 @@ function my_chat_req(a1, a2, a3, a4, a5, a6)
 	return x.call(chat_req, a1, a2, a3, a4, a5, a6)
 end
 
-
-function my_localplayer_spawn(a1, a2, a3, a4)
+function my_localplayer_beginplay(a1)
+	LocalPlayer = a1
 	print(x.name(a1))
-	return x.call(localplayer_spawn, a1, a2, a3, a4)
-end
-
-function my_init_game(a1, a2, a3, a4)
-	return x.call(init_game, a1, a2, a3, a4)
+	return x.call(localplayer_beginplay, a1)
 end
 
 x.hook(send, "my_send")
@@ -124,5 +91,13 @@ x.hook(search_friend, "my_search_friend")
 x.hook(activity_req, "my_activity_req")
 x.hook(mission_req, "my_mission_req")
 x.hook(chat_req, "my_chat_req")
-x.hook(localplayer_spawn, "my_localplayer_spawn")
-x.hook(init_game, "my_init_game")
+x.hook(localplayer_beginplay, "my_localplayer_beginplay")
+
+
+
+print("======================")
+if Attacker then
+	ue.set_prop(Attacker, "bCanBeDamaged", 0)
+	local result = ue.find_prop(Attacker, "bCanBeDamaged")
+	print(result.name..":"..result.value)
+end

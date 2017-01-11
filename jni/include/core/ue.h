@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
-#include "logger.h"
+#include <map>
+#include <string>
 using namespace std;
 
 struct FName
@@ -68,6 +69,11 @@ struct UBoolProperty : UProperty
 	char FieldMask;
 };
 
+struct UArrayProperty : UProperty
+{
+	UProperty* Property;
+};
+
 struct UStruct : UField
 {
 	UStruct*	SuperStruct;
@@ -87,24 +93,6 @@ struct UStruct : UField
 	TArray		ScriptObjectReferences;
 };
 
-
-struct UFunction : UStruct
-{
-	// Persistent variables.
-	uint	FunctionFlags;
-	uint	RepOffset;
-
-	// Variables in memory only.
-	char	NumParms;
-	short	ParmsSize;
-	short	ReturnValueOffset;
-	/** Id of this RPC function call (must be FUNC_Net & (FUNC_NetService|FUNC_NetResponse)) */
-	short	RPCId;
-	/** Id of the corresponding response call (must be FUNC_Net & FUNC_NetService) */
-	short	RPCResponseId;
-	/** pointer to first local struct property in this UFunction that contains defaults */
-	UProperty* FirstPropertyToInit;
-};
 
 struct UScriptStruct : UStruct
 {
@@ -130,17 +118,16 @@ struct FUObjectItem
 	int SerialNumber;
 };
 
-struct FMatineePropertyQuery
-{
-	void* OutPropContainer;
-	UProperty* OutProperty;
-	UObject* OutObject;
-};
-
 void get_obj_name(int obj, char *name, int size);
 int get_obj_type(int obj);
 void get_type_inst(int type, vector<int> &vec_inst);
-void get_inner_obj(int obj, vector<int>& vec_inner_obj);
 void get_super_class(int type, vector<int>& vec_super_class);
-long long get_prop_value(int obj, int prop_obj);
-void set_prop_value(int inst, int prop, long long value);
+void get_fname_name(long long fname, char *name, int size);
+void get_class_props(int type, vector<int> &vec_props);
+int get_prop_offset(int prop);
+int get_bool_prop_value(int prop, int addr);
+void set_bool_prop_value(int prop, int addr, char value);
+int get_struct_prop(int prop);
+int get_array_prop(int prop);
+int get_prop_array_dim(int prop);
+int get_prop_elem_size(int prop);
