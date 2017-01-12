@@ -80,7 +80,7 @@ function enum_props(inst)
 					decode_prop_item(item.addr+i*itemsize, item_prop, nil, "["..i.."]")
 				end
 			elseif type_name=="StructProperty" then
-				decode_struct(addr, uecore.get_prop_struct(prop), item.name..".", nil)
+				decode_struct(item.addr, uecore.get_prop_struct(prop), item.name..".", nil)
 			else
 				--print("undecode "..item.name..":"..item.type)
 				item=nil

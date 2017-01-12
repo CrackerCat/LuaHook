@@ -120,7 +120,8 @@ end
 print("-------cccc------")
 if Attacker then
 	print("Attacker:")
-	ue.set_prop(Attacker, "bCanBeDamaged", 0)
-	local prop = ue.find_prop(Attacker, "bCanBeDamaged")
-	print(prop.name..prop.value)
+	local props = ue.enum_props(Attacker)
+	for _, prop in pairs(props) do
+		print(prop.name..":"..prop.type..":"..prop.value)
+	end
 end
