@@ -110,7 +110,7 @@ end
 function find_prop(inst, prop_name)
 	local result = enum_props(inst)
 	for _, item in pairs(result) do
-		if string.find(item.name, prop_name) then
+		if item.name==prop_name then
 			return item
 		end
 	end
@@ -155,6 +155,10 @@ end
 
 function typenameof(obj)
 	return uecore.get_obj_type_name(obj)
+end
+
+function find_class(class_name)
+	return uecore.find_class_by_name(class_name)
 end
 
 return env

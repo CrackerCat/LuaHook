@@ -178,21 +178,53 @@ function get_class_props(class)
 	return result
 end
 
-function get_class_inst(class)
-	local result = {}
+function foreach_obj(callback)
 	if gobj_array~=0 then
 		local objs_start_addr = x.rint32(gobj_array+offset.ObjObjects)
 		local objs_count = x.rint32(gobj_array+offset.ObjObjects+8)
 		for i=0, objs_count-1 do
 			local obj_item_addr =  objs_start_addr + 16*i
 			local obj = x.rint32(obj_item_addr)
-			local obj_type = get_obj_type(obj)
-			if obj_type==class then
-				table.insert(result, obj)
+			if obj~=0 then
+				if not callback(obj) then
+					return
+				end
 			end
 		end
 	end
+end
+
+function get_class_inst(class)
+	local result = {}
 	
+	function judge_obj_is_inst(obj)
+		local obj_type = get_obj_type(obj)
+		if obj_type==class then
+			table.insert(result, obj)
+		end
+		return true
+	end
+	
+	foreach_obj(judge_obj_is_inst)
+	return result
+end
+
+function find_class_by_name(class_name)
+	local result = nil
+	
+	function judge_obj_is_class_of(obj)
+		local type_name = get_obj_type_name(obj)
+		if type_name=="Class" or type_name=="BlueprintGeneratedClass" then
+			local obj_name = get_obj_name(obj)
+			if obj_name==class_name then
+				result=obj
+				return false
+			end
+		end
+		return true
+	end
+	
+	foreach_obj(judge_obj_is_class_of)
 	return result
 end
 

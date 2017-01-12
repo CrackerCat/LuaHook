@@ -83,6 +83,27 @@ end
 
 function my_localplayer_beginplay(a1)
 	LocalPlayer = a1
+	--[[
+	if LocalPlayer~=0 then
+		local player_prop = ue.find_prop(LocalPlayer, "Player")
+		print(player_prop)
+		local player =  player_prop.value
+		if player~=0 then
+			print(player)
+			ue.set_prop(player, "CurrentNetSpeed", 90000)
+			local speed = ue.find_prop(player, "CurrentNetSpeed")
+			print(speed.value)
+		end
+	end
+	--]]
+	--[[
+	print("begin play")
+	print(ue.nameof(a1).." "..ue.typenameof(a1).." "..ue.typenameof(ue.typeof(a1)))
+	local xxx = ue.find_class(ue.typenameof(a1))
+	print(xxx)
+	local inst = ue.get_inst(ue.typeof(a1))
+	print(#inst)
+	--]]
 	return x.call(localplayer_beginplay, a1)
 end
 
@@ -109,19 +130,3 @@ x.hook(chat_req, "my_chat_req")
 x.hook(localplayer_beginplay, "my_localplayer_beginplay")
 x.hook(start_reload, "my_start_reload")
 x.hook(moveto, "my_moveto")
-
-
-if LocalPlayer then
-	print("god")
-	x.call(server_sucide, LocalPlayer)
-end
-
-
-print("-------cccc------")
-if Attacker then
-	print("Attacker:")
-	local props = ue.enum_props(Attacker)
-	for _, prop in pairs(props) do
-		print(prop.name..":"..prop.type..":"..prop.value)
-	end
-end
