@@ -41,7 +41,6 @@
     <ClCompile Include="jni\core\lua-loader.cpp" />
     <ClCompile Include="jni\core\md5.cpp" />
     <ClCompile Include="jni\core\proto.cpp" />
-    <ClCompile Include="jni\core\ue.cpp" />
     <ClCompile Include="jni\injector\android-injector.cpp" />
     <ClCompile Include="jni\injector\injector.cpp" />
     <ClCompile Include="jni\core\special-hook.cpp" />
@@ -79,6 +78,5 @@
     <ClInclude Include="jni\include\core\md5.h" />
     <ClInclude Include="jni\injector\android-injector.h" />
     <ClInclude Include="jni\include\core\special-hook.h" />
-    <ClInclude Include="jni\include\core\ue.h" />
   </ItemGroup>
 </Project>

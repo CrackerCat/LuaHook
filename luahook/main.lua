@@ -9,6 +9,11 @@ local activity_req = x.dlsym("libUE4.so", "_ZN22GShooterActivitySystem24GetActiv
 local mission_req = x.dlsym("libUE4.so", "_ZN15GShooterMission24GetLivenessRewardRequestEj")
 local chat_req = x.dlsym("libUE4.so", "_ZN18GShooterChatSystem14SendMsgRequestEN24EGShooterChatChannelType4TypeE7FStringjRK5FTextj")
 local localplayer_beginplay = x.dlsym("libUE4.so", "_ZN25AGShooterPlayerController9BeginPlayEv")
+local start_reload = x.dlsym("libUE4.so", "_ZN15AGShooterWeapon11StartReloadEb")
+local server_reload = x.dlsym("libUE4.so", "_ZN15AGShooterWeapon17ServerStartReloadEv")
+local pvp_god = x.dlsym("libUE4.so", "_ZN25AGShooterPlayerController12ServerPvpGodEbf")
+local moveto = x.dlsym("libUE4.so", "_ZN27UCharacterMovementComponent21ReplicateMoveToServerEfRK7FVector")
+local server_sucide = x.dlsym("libUE4.so", "_ZN17APlayerController5ResetEv")
 
 GSBaseClient = GSBaseClient or nil
 EMailSystem = EMailSystem or nil
@@ -78,8 +83,18 @@ end
 
 function my_localplayer_beginplay(a1)
 	LocalPlayer = a1
-	print(x.name(a1))
 	return x.call(localplayer_beginplay, a1)
+end
+
+function my_start_reload(a1, a2)
+	print("reloadx...")
+	return x.call(start_reload, a1, a2)
+end
+
+function my_moveto(a1, a2, a3)
+	--print("moveto "..x.i2f(a2))
+	a2 = x.f2i(0.9)
+	return x.call(moveto, a1, a2, a3)
 end
 
 x.hook(send, "my_send")
@@ -92,12 +107,20 @@ x.hook(activity_req, "my_activity_req")
 x.hook(mission_req, "my_mission_req")
 x.hook(chat_req, "my_chat_req")
 x.hook(localplayer_beginplay, "my_localplayer_beginplay")
+x.hook(start_reload, "my_start_reload")
+x.hook(moveto, "my_moveto")
 
 
+if LocalPlayer then
+	print("god")
+	x.call(server_sucide, LocalPlayer)
+end
 
-print("======================")
+
+print("-------cccc------")
 if Attacker then
+	print("Attacker:")
 	ue.set_prop(Attacker, "bCanBeDamaged", 0)
-	local result = ue.find_prop(Attacker, "bCanBeDamaged")
-	print(result.name..":"..result.value)
+	local prop = ue.find_prop(Attacker, "bCanBeDamaged")
+	print(prop.name..prop.value)
 end

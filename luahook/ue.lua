@@ -2,6 +2,8 @@ local env = {}
 setmetatable(env, {__index = _G})
 _ENV = env
 
+local uecore = require("ue_core")
+
 function read_fs(fs)
 	local wchar_len = x.rint32(fs+4)
 	if wchar_len>0 then
@@ -28,15 +30,14 @@ function enum_props(inst)
 	function decode_prop_item(addr, prop, prefix, postfix)
 		if addr~=0 and prop~=0 then
 			local item={}
-			local offset = x.offset(prop)
-			local type_name = x.name(x.type(prop))
-			item.name = x.name(prop)
+			local offset = uecore.get_prop_offset(prop)
+			local type_name = uecore.get_obj_type_name(prop)
+			item.name = uecore.get_obj_name(prop)
+			if prefix then item.name = prefix..item.name end
+			if postfix then item.name = item.name..postfix end
 			item.prop = prop
 			item.addr = addr+offset
 			item.type = type_name
-			
-			if prefix~=nil then item.name = prefix..item.name end
-			if postfix~=nil then item.name = item.name..postfix end
 			
 			if type_name=="Int64Property" or type_name=="UInt64Property" then
 				item.value = x.rint64(item.addr)
@@ -45,7 +46,7 @@ function enum_props(inst)
 				item.value = x.rdouble(item.addr)
 				table.insert(result, item)
 			elseif type_name=="NameProperty" then
-				item.value = x.fname(x.rint64(item.addr))
+				item.value = uecore.get_fname_name(item.addr)
 				table.insert(result, item)
 			elseif type_name=="IntProperty" or type_name=="UInt32Property" or type_name=="ObjectProperty" or type_name=="ClassProperty" then
 				item.value = x.rint32(item.addr)
@@ -60,7 +61,7 @@ function enum_props(inst)
 				item.value = x.rint8(item.addr)
 				table.insert(result, item)
 			elseif type_name=="BoolProperty" then
-				item.value = x.rbool(prop, item.addr)
+				item.value = uecore.get_bool_prop_value(prop, item.addr)
 				table.insert(result, item)
 			elseif type_name=="StrProperty" then
 				local fs = read_fs(item.addr)
@@ -71,15 +72,15 @@ function enum_props(inst)
 				end
 				table.insert(result, item)
 			elseif type_name=="ArrayProperty" then
-				local item_prop=x.array(prop)
-				local totalsize = x.elemsize(prop)
-				local itemsize = x.elemsize(item_prop)
+				local item_prop=uecore.get_prop_array(prop)
+				local totalsize = uecore.get_prop_elem_size(prop)
+				local itemsize = uecore.get_prop_elem_size(item_prop)
 				local count = totalsize/itemsize
 				for i=0, count-1, 1 do
 					decode_prop_item(item.addr+i*itemsize, item_prop, nil, "["..i.."]")
 				end
 			elseif type_name=="StructProperty" then
-				decode_struct(addr, x.struct(prop), item.name..".", nil)
+				decode_struct(addr, uecore.get_prop_struct(prop), item.name..".", nil)
 			else
 				--print("undecode "..item.name..":"..item.type)
 				item=nil
@@ -88,7 +89,7 @@ function enum_props(inst)
 	end
 
 	function recurse_decode_struct(addr, struct, prefix, postfix)
-		local props = x.props(struct)
+		local props = uecore.get_class_props(struct)
 		for _, prop in pairs(props) do
 			decode_item(addr, prop, prefix, postfix)
 		end
@@ -98,7 +99,7 @@ function enum_props(inst)
 	decode_item = decode_prop_item
 	decode_struct = recurse_decode_struct
 	
-	local super = x.super(x.type(inst))
+	local super = uecore.get_super_class(uecore.get_obj_type(inst))
 	for _, class in pairs(super) do
 		decode_struct(inst, class, nil, nil)
 	end
@@ -133,11 +134,27 @@ function set_prop(inst, prop_name, value)
 		elseif type_name=="UInt8Property" or type_name=="ByteProperty" then
 			x.wint8(item.addr, value)
 		elseif type_name=="BoolProperty" then
-			x.wbool(item.prop, item.addr, value)
+			uecore.set_bool_prop_value(item.prop, item.addr, value)
 		elseif type_name=="StrProperty" then
 			write_fs(item.addr, value)
 		end
 	end
+end
+
+function get_inst(class)
+	return uecore.get_class_inst(class)
+end
+
+function nameof(obj)
+	return uecore.get_obj_name(obj)
+end
+
+function typeof(obj)
+	return uecore.get_obj_type(obj)
+end
+
+function typenameof(obj)
+	return uecore.get_obj_type_name(obj)
 end
 
 return env

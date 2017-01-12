@@ -76,7 +76,6 @@
     <ClCompile Include="jni\core\md5.cpp" />
     <ClCompile Include="jni\core\proto.cpp" />
     <ClCompile Include="jni\core\special-hook.cpp" />
-    <ClCompile Include="jni\core\ue.cpp" />
     <ClCompile Include="jni\injector\android-injector.cpp" />
     <ClCompile Include="jni\injector\injector.cpp" />
   </ItemGroup>
@@ -112,7 +111,6 @@
     <ClInclude Include="jni\include\core\logger.h" />
     <ClInclude Include="jni\include\core\md5.h" />
     <ClInclude Include="jni\include\core\special-hook.h" />
-    <ClInclude Include="jni\include\core\ue.h" />
     <ClInclude Include="jni\injector\android-injector.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

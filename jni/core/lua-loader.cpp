@@ -12,7 +12,6 @@
 #include <core/special-hook.h>
 #include <core/armhook.h>
 #include <core/common-help.h>
-#include <core/ue.h>
 
 using namespace std;
 
@@ -271,166 +270,6 @@ static int lua_f2i(lua_State *l)
 	return 1;
 }
 
-static int lua_get_obj_name(lua_State *l)
-{
-	if (lua_gettop(l) != 1)
-		return 1;
-
-	char name[256] = { 0x00 };
-	int obj = luaL_checkinteger(l, 1);
-	get_obj_name(obj, name, 256);
-	lua_pushstring(l, name);
-	return 1;
-}
-
-static int lua_get_fname(lua_State *l)
-{
-	if (lua_gettop(l) != 1)
-		return 1;
-
-	char name[256] = { 0x00 };
-	long long fname = luaL_checkinteger(l, 1);
-	get_fname_name(fname, name, 256);
-	lua_pushstring(l, name);
-	return 1;
-}
-
-static int lua_get_obj_type(lua_State *l)
-{
-	if (lua_gettop(l) != 1)
-		return 1;
-
-	int obj = luaL_checkinteger(l, 1);
-	int type = get_obj_type(obj);
-	lua_pushinteger(l, type);
-	return 1;
-}
-
-static int lua_get_type_inst(lua_State *l)
-{
-	if (lua_gettop(l) != 1)
-		return 1;
-
-	vector<int> vec_inst;
-	int type = luaL_checkinteger(l, 1);
-	get_type_inst(type, vec_inst);
-
-	lua_newtable(l);
-	for (int i=0; i<vec_inst.size(); i++)
-	{
-		lua_pushinteger(l, vec_inst[i]);
-		lua_rawseti(l, -2, i+1);
-	}
-	return 1;
-}
-
-
-static int lua_get_super_class(lua_State *l)
-{
-	if (lua_gettop(l) != 1)
-		return 1;
-
-	vector<int> vec_super_class;
-	int type = luaL_checkinteger(l, 1);
-	get_super_class(type, vec_super_class);
-
-	lua_newtable(l);
-	for (int i = 0; i < vec_super_class.size(); i++)
-	{
-		lua_pushinteger(l, vec_super_class[i]);
-		lua_rawseti(l, -2, i+1);
-	}
-	return 1;
-}
-
-static int lua_get_properties(lua_State *l)
-{
-	if (lua_gettop(l) != 1)
-		return 1;
-
-	vector<int> vec_props;
-	get_class_props(luaL_checkinteger(l, 1), vec_props);
-
-	lua_newtable(l);
-	for (int i=0; i<vec_props.size(); i++)
-	{
-		lua_pushinteger(l, vec_props[i]);
-		lua_rawseti(l, -2, i);
-	}
-
-	return 1;
-}
-
-static int lua_get_property_offset(lua_State *l)
-{
-	if (lua_gettop(l) != 1)
-		return 1;
-
-	int prop = luaL_checkinteger(l, 1);
-	if (prop)
-	{
-		lua_pushinteger(l, get_prop_offset(prop));
-	}
-
-	return 1;
-}
-
-static int lua_get_property_struct(lua_State *l)
-{
-	if (lua_gettop(l) != 1)
-		return 1;
-
-	int prop = luaL_checkinteger(l, 1);
-	if (prop)
-	{
-		lua_pushinteger(l, get_struct_prop(prop));
-	}
-
-	return 1;
-}
-
-static int lua_get_property_array(lua_State *l)
-{
-	if (lua_gettop(l) != 1)
-		return 1;
-
-	int prop = luaL_checkinteger(l, 1);
-	if (prop)
-	{
-		lua_pushinteger(l, get_array_prop(prop));
-	}
-
-	return 1;
-}
-
-static int lua_get_property_arraydim(lua_State *l)
-{
-	if (lua_gettop(l) != 1)
-		return 1;
-
-	int prop = luaL_checkinteger(l, 1);
-	if (prop)
-	{
-		lua_pushinteger(l, get_prop_array_dim(prop));
-	}
-
-	return 1;
-}
-
-static int lua_get_property_elemsize(lua_State *l)
-{
-	if (lua_gettop(l) != 1)
-		return 1;
-
-	int prop = luaL_checkinteger(l, 1);
-	if (prop)
-	{
-		lua_pushinteger(l, get_prop_elem_size(prop));
-	}
-
-	return 1;
-}
-
 static int lua_write_int64(lua_State *l)
 {
 	if (lua_gettop(l) != 2)
@@ -572,7 +411,7 @@ static int lua_write_int8(lua_State *l)
 		return 1;
 
 	int addr = luaL_checkinteger(l, 1);
-	int value = luaL_checkinteger(l, 2);
+	char value = luaL_checkinteger(l, 2);
 	if (addr)
 	{
 		*(char *)addr = value;
@@ -589,35 +428,6 @@ static int lua_read_int8(lua_State *l)
 	if (addr)
 	{
 		lua_pushinteger(l, *(char *)addr);
-	}
-	return 1;
-}
-
-static int lua_write_bool(lua_State *l)
-{
-	if (lua_gettop(l) != 3)
-		return 1;
-
-	int prop = luaL_checkinteger(l, 1);
-	int addr = luaL_checkinteger(l, 2);
-	char value = luaL_checkinteger(l, 3);
-	if (addr && prop)
-	{
-		set_bool_prop_value(prop, addr, value);
-	}
-	return 1;
-}
-
-static int lua_read_bool(lua_State *l)
-{
-	if (lua_gettop(l) != 2)
-		return 1;
-
-	int prop = luaL_checkinteger(l, 1);
-	int addr = luaL_checkinteger(l, 2);
-	if (prop && addr)
-	{
-		lua_pushinteger(l, get_bool_prop_value(prop, addr));
 	}
 	return 1;
 }
@@ -704,17 +514,6 @@ static const luaL_Reg XLUA[] =
 	{ "argv", lua_set_argv },
 	{ "dlsym", lua_get_addr },
 	{ "dump", lua_dump },
-	{ "name", lua_get_obj_name },
-	{ "fname", lua_get_fname },
-	{ "type", lua_get_obj_type },
-	{ "inst", lua_get_type_inst },
-	{ "super", lua_get_super_class },
-	{ "props", lua_get_properties },
-	{ "offset", lua_get_property_offset },
-	{ "struct", lua_get_property_struct },
-	{ "array", lua_get_property_array },
-	{ "arraydim", lua_get_property_arraydim },
-	{ "elemsize", lua_get_property_elemsize },
 	{ "i2s", lua_i2s },
 	{ "s2i", lua_s2i },
 	{ "i2f", lua_i2f },
@@ -731,8 +530,6 @@ static const luaL_Reg XLUA[] =
 	{ "rint16", lua_read_int16 },
 	{ "wint8", lua_write_int8 },
 	{ "rint8", lua_read_int8 },
-	{ "wbool", lua_write_bool },
-	{ "rbool", lua_read_bool },
 	{ "wstr", lua_write_string },
 	{ "rstr", lua_read_string },
 	{ "wwstr", lua_write_wstring },
