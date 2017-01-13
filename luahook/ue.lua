@@ -3,6 +3,8 @@ setmetatable(env, {__index = _G})
 _ENV = env
 
 local uecore = require("ue_core")
+local func_decode_prop=nil
+local func_decode_struct=nil
 
 function read_fs(fs)
 	local wchar_len = x.rint32(fs+4)
@@ -22,86 +24,79 @@ function write_fs(fs, str)
 	end
 end
 
-function enum_props(inst)
-	local result=nil
-	local decode_item=nil
-	local decode_struct=nil
-	
-	function decode_prop_item(addr, prop, prefix, postfix)
-		if addr~=0 and prop~=0 then
-			local item={}
-			local offset = uecore.get_prop_offset(prop)
-			local type_name = uecore.get_obj_type_name(prop)
-			item.name = uecore.get_obj_name(prop)
-			if prefix then item.name = prefix..item.name end
-			if postfix then item.name = item.name..postfix end
-			item.prop = prop
-			item.addr = addr+offset
-			item.type = type_name
+function decode_prop(addr, prop, prefix, postfix, result)
+	if prop~=0 then
+		local item={}
+		local offset = uecore.get_prop_offset(prop)
+		local type_name = uecore.get_obj_type_name(prop)
+		item.name = uecore.get_obj_name(prop)
+		if prefix then item.name = prefix..item.name end
+		if postfix then item.name = item.name..postfix end
+		item.prop = prop
+		item.addr = addr+offset
+		item.type = type_name
 			
-			if type_name=="Int64Property" or type_name=="UInt64Property" then
-				item.value = x.rint64(item.addr)
-				table.insert(result, item)
-			elseif type_name=="DoubleProperty" then
-				item.value = x.rdouble(item.addr)
-				table.insert(result, item)
-			elseif type_name=="NameProperty" then
-				item.value = uecore.get_fname_name(item.addr)
-				table.insert(result, item)
-			elseif type_name=="IntProperty" or type_name=="UInt32Property" or type_name=="ObjectProperty" or type_name=="ClassProperty" then
-				item.value = x.rint32(item.addr)
-				table.insert(result, item)
-			elseif type_name=="FloatProperty" then
-				item.value = x.rfloat(item.addr)
-				table.insert(result, item)
-			elseif type_name=="Int16Property" or type_name=="UInt16Property" then
-				item.value = x.rint16(item.addr)
-				table.insert(result, item)
-			elseif type_name=="UInt8Property" or type_name=="ByteProperty" then
-				item.value = x.rint8(item.addr)
-				table.insert(result, item)
-			elseif type_name=="BoolProperty" then
-				item.value = uecore.get_bool_prop_value(prop, item.addr)
-				table.insert(result, item)
-			elseif type_name=="StrProperty" then
-				local fs = read_fs(item.addr)
-				if fs then
-					item.value=fs
-				else
-					item.value=""
-				end
-				table.insert(result, item)
-			elseif type_name=="ArrayProperty" then
-				local item_prop=uecore.get_prop_array(prop)
-				local totalsize = uecore.get_prop_elem_size(prop)
-				local itemsize = uecore.get_prop_elem_size(item_prop)
-				local count = totalsize/itemsize
-				for i=0, count-1, 1 do
-					decode_prop_item(item.addr+i*itemsize, item_prop, nil, "["..i.."]")
-				end
-			elseif type_name=="StructProperty" then
-				decode_struct(item.addr, uecore.get_prop_struct(prop), item.name..".", nil)
+		if type_name=="Int64Property" or type_name=="UInt64Property" then
+			item.value = x.rint64(item.addr)
+			table.insert(result, item)
+		elseif type_name=="DoubleProperty" then
+			item.value = x.rdouble(item.addr)
+			table.insert(result, item)
+		elseif type_name=="NameProperty" then
+			item.value = uecore.get_fname_name(item.addr)
+			table.insert(result, item)
+		elseif type_name=="IntProperty" or type_name=="UInt32Property" or type_name=="ObjectProperty" or type_name=="ClassProperty" then
+			item.value = x.rint32(item.addr)
+			table.insert(result, item)
+		elseif type_name=="FloatProperty" then
+			item.value = x.rfloat(item.addr)
+			table.insert(result, item)
+		elseif type_name=="Int16Property" or type_name=="UInt16Property" then
+			item.value = x.rint16(item.addr)
+			table.insert(result, item)
+		elseif type_name=="UInt8Property" or type_name=="ByteProperty" then
+			item.value = x.rint8(item.addr)
+			table.insert(result, item)
+		elseif type_name=="BoolProperty" then
+			item.value = uecore.get_bool_prop_value(prop, item.addr)
+			table.insert(result, item)
+		elseif type_name=="StrProperty" then
+			local fs = read_fs(item.addr)
+			if fs then
+				item.value=fs
 			else
-				--print("undecode "..item.name..":"..item.type)
-				item=nil
+				item.value=""
 			end
+			table.insert(result, item)
+		elseif type_name=="ArrayProperty" then
+			local item_prop=uecore.get_prop_array(prop)
+			local totalsize = uecore.get_prop_elem_size(prop)
+			local itemsize = uecore.get_prop_elem_size(item_prop)
+			local count = totalsize/itemsize
+			for i=0, count-1, 1 do
+				decode_prop(item.addr+i*itemsize, item_prop, nil, "["..i.."]", result)
+			end
+		elseif type_name=="StructProperty" then
+			func_decode_struct(item.addr, uecore.get_prop_struct(prop), item.name..".", nil, result)
+		else
+			--print("undecode "..item.name..":"..item.type)
+			item=nil
 		end
 	end
+end
 
-	function recurse_decode_struct(addr, struct, prefix, postfix)
-		local props = uecore.get_class_props(struct)
-		for _, prop in pairs(props) do
-			decode_item(addr, prop, prefix, postfix)
-		end
+function decode_struct(addr, struct, prefix, postfix, result)
+	local props = uecore.get_struct_props(struct)
+	for _, prop in pairs(props) do
+		func_decode_prop(addr, prop, prefix, postfix, result)
 	end
+end
 
-	result={}
-	decode_item = decode_prop_item
-	decode_struct = recurse_decode_struct
-	
+function enum_props(inst)
+	local result={}
 	local super = uecore.get_super_class(uecore.get_obj_type(inst))
 	for _, class in pairs(super) do
-		decode_struct(inst, class, nil, nil)
+		func_decode_struct(inst, class, nil, nil, result)
 	end
 	
 	return result
@@ -161,4 +156,6 @@ function find_class(class_name)
 	return uecore.find_class_by_name(class_name)
 end
 
+func_decode_prop = decode_prop
+func_decode_struct = decode_struct
 return env

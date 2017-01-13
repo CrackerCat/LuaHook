@@ -8,19 +8,19 @@ local search_friend = x.dlsym("libUE4.so", "_ZN20GShooterFriendSystem19SearchFri
 local activity_req = x.dlsym("libUE4.so", "_ZN22GShooterActivitySystem24GetActivityRewardRequestEjh")
 local mission_req = x.dlsym("libUE4.so", "_ZN15GShooterMission24GetLivenessRewardRequestEj")
 local chat_req = x.dlsym("libUE4.so", "_ZN18GShooterChatSystem14SendMsgRequestEN24EGShooterChatChannelType4TypeE7FStringjRK5FTextj")
-local localplayer_beginplay = x.dlsym("libUE4.so", "_ZN25AGShooterPlayerController9BeginPlayEv")
+local playercontroller_beginplay = x.dlsym("libUE4.so", "_ZN25AGShooterPlayerController9BeginPlayEv")
 local start_reload = x.dlsym("libUE4.so", "_ZN15AGShooterWeapon11StartReloadEb")
 local server_reload = x.dlsym("libUE4.so", "_ZN15AGShooterWeapon17ServerStartReloadEv")
 local pvp_god = x.dlsym("libUE4.so", "_ZN25AGShooterPlayerController12ServerPvpGodEbf")
 local moveto = x.dlsym("libUE4.so", "_ZN27UCharacterMovementComponent21ReplicateMoveToServerEfRK7FVector")
 local server_sucide = x.dlsym("libUE4.so", "_ZN17APlayerController5ResetEv")
+local actor_rpc = x.dlsym("libUE4.so", "_ZN6AActor18CallRemoteFunctionEP9UFunctionPvP11FOutParmRecP6FFrame")
 
 GSBaseClient = GSBaseClient or nil
 EMailSystem = EMailSystem or nil
 SignInSystem = SignInSystem or nil
 LogicSession = LogicSession or nil
 ActivitySystem = ActivitySystem or nil
-LocalPlayer = LocalPlayer or nil
 Attacker = Attacker or nil
 
 function my_send(a1, a2, a3, a4)
@@ -81,34 +81,42 @@ function my_chat_req(a1, a2, a3, a4, a5, a6)
 	return x.call(chat_req, a1, a2, a3, a4, a5, a6)
 end
 
-function my_localplayer_beginplay(a1)
-	LocalPlayer = a1
+function my_playercontroller_beginplay(a1)
+	local player_prop = ue.find_prop(a1, "Player")
+	local player =  player_prop.value
+	
 	--[[
-	if LocalPlayer~=0 then
-		local player_prop = ue.find_prop(LocalPlayer, "Player")
-		print(player_prop)
-		local player =  player_prop.value
-		if player~=0 then
-			print(player)
-			ue.set_prop(player, "CurrentNetSpeed", 90000)
-			local speed = ue.find_prop(player, "CurrentNetSpeed")
-			print(speed.value)
-		end
+	print("------------------local player controller-------------------")
+	local controller_props = ue.enum_props(a1)
+	for _, prop in pairs(controller_props) do
+		print(prop.name..":"..prop.value)
 	end
+	
+	print("------------------local player-------------------")
+	local player_props = ue.enum_props(player)
+	for _, prop in pairs(player_props) do
+		print(prop.name..":"..prop.value)
+	end
+	
+	print("-----------------------------------------------")
 	--]]
-	--[[
-	print("begin play")
-	print(ue.nameof(a1).." "..ue.typenameof(a1).." "..ue.typenameof(ue.typeof(a1)))
-	local xxx = ue.find_class(ue.typenameof(a1))
-	print(xxx)
-	local inst = ue.get_inst(ue.typeof(a1))
-	print(#inst)
-	--]]
-	return x.call(localplayer_beginplay, a1)
+
+	return x.call(playercontroller_beginplay, a1)
 end
 
 function my_start_reload(a1, a2)
-	print("reloadx...")
+	--print("reloadx...")
+	--[[
+	print("------------------weapon-------------------")
+	local weapon_props = ue.enum_props(a1)
+	for _, prop in pairs(weapon_props) do
+		print(prop.name..":"..prop.value)
+	end
+	--]]
+	print("---------------------")
+	ue.set_prop(a1, "InstantConfig.HitHeadScale", 1)
+	local damage_hit_prop = ue.find_prop(a1, "InstantConfig.HitHeadScale")
+	print(damage_hit_prop.value)
 	return x.call(start_reload, a1, a2)
 end
 
@@ -116,6 +124,18 @@ function my_moveto(a1, a2, a3)
 	--print("moveto "..x.i2f(a2))
 	a2 = x.f2i(0.9)
 	return x.call(moveto, a1, a2, a3)
+end
+
+
+Toggle=true
+function my_actor_rpc(a1, a2, a3, a4, a5)
+	if Toggle then
+		Toggle=false
+		print("-------------")
+		print("rpc: "..ue.nameof(a1).."->"..ue.nameof(a2)..":")
+	end
+	
+	return x.call(actor_rpc, a1, a2, a3, a4, a5)
 end
 
 x.hook(send, "my_send")
@@ -127,6 +147,7 @@ x.hook(search_friend, "my_search_friend")
 x.hook(activity_req, "my_activity_req")
 x.hook(mission_req, "my_mission_req")
 x.hook(chat_req, "my_chat_req")
-x.hook(localplayer_beginplay, "my_localplayer_beginplay")
+x.hook(playercontroller_beginplay, "my_playercontroller_beginplay")
 x.hook(start_reload, "my_start_reload")
 x.hook(moveto, "my_moveto")
+x.hook(actor_rpc, "my_actor_rpc")

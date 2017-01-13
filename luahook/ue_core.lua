@@ -167,9 +167,9 @@ function get_super_class(class)
 	return result
 end
 
-function get_class_props(class)
+function get_struct_props(struct)
 	local result = {}
-	local prop = x.rint32(class+offset.PropertyLink)
+	local prop = x.rint32(struct+offset.PropertyLink)
 	while (prop~=0) do
 		table.insert(result, prop)
 		prop = x.rint32(prop+offset.PropertyLinkNext)
