@@ -87,13 +87,13 @@ function my_playercontroller_beginplay(a1)
 	
 	--[[
 	print("------------------local player controller-------------------")
-	local controller_props = ue.enum_props(a1)
+	local controller_props = ue.get_props(a1)
 	for _, prop in pairs(controller_props) do
 		print(prop.name..":"..prop.value)
 	end
 	
 	print("------------------local player-------------------")
-	local player_props = ue.enum_props(player)
+	local player_props = ue.get_props(player)
 	for _, prop in pairs(player_props) do
 		print(prop.name..":"..prop.value)
 	end
@@ -108,7 +108,7 @@ function my_start_reload(a1, a2)
 	--print("reloadx...")
 	--[[
 	print("------------------weapon-------------------")
-	local weapon_props = ue.enum_props(a1)
+	local weapon_props = ue.get_props(a1)
 	for _, prop in pairs(weapon_props) do
 		print(prop.name..":"..prop.value)
 	end
@@ -127,12 +127,12 @@ function my_moveto(a1, a2, a3)
 end
 
 
-Toggle=true
 function my_actor_rpc(a1, a2, a3, a4, a5)
-	if Toggle then
-		Toggle=false
-		print("-------------")
-		print("rpc: "..ue.nameof(a1).."->"..ue.nameof(a2)..":")
+	print("-------------")
+	print("rpc: "..ue.nameof(a1).."->"..ue.nameof(a2)..":")
+	local params = ue.get_params(a2, a3)
+	for _, param in pairs(params) do
+		print(param.name..":"..param.value)
 	end
 	
 	return x.call(actor_rpc, a1, a2, a3, a4, a5)

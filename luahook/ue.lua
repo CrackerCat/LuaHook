@@ -60,6 +60,15 @@ function decode_prop(addr, prop, prefix, postfix, result)
 		elseif type_name=="BoolProperty" then
 			item.value = uecore.get_bool_prop_value(prop, item.addr)
 			table.insert(result, item)
+		elseif type_name=="DelegateProperty" then
+			item.value = item.addr			-- addr = TScriptDelegate
+			table.insert(result, item)
+		elseif type_name=="MulticastDelegateProperty" then
+			item.value = item.addr			-- addr = TMulticastScriptDelegate
+			table.insert(result, item)
+		elseif type_name=="WeakObjectProperty" then
+			item.value = item.addr			-- addr = FWeakObjectPtr
+			table.insert(result, item)
 		elseif type_name=="StrProperty" then
 			local fs = read_fs(item.addr)
 			if fs then
@@ -92,7 +101,17 @@ function decode_struct(addr, struct, prefix, postfix, result)
 	end
 end
 
-function enum_props(inst)
+function get_params(func, buffer)
+	local result={}
+	local params = uecore.get_function_params(func)
+	for _, param in pairs(params) do
+		func_decode_prop(buffer, param, nil, nil, result)
+	end
+	
+	return result
+end
+
+function get_props(inst)
 	local result={}
 	local super = uecore.get_super_class(uecore.get_obj_type(inst))
 	for _, class in pairs(super) do
@@ -103,7 +122,7 @@ function enum_props(inst)
 end
 
 function find_prop(inst, prop_name)
-	local result = enum_props(inst)
+	local result = get_props(inst)
 	for _, item in pairs(result) do
 		if item.name==prop_name then
 			return item
@@ -111,9 +130,8 @@ function find_prop(inst, prop_name)
 	end
 end
 
-function set_prop(inst, prop_name, value)
-	local item = find_prop(inst, prop_name)
-	if item then
+function set_prop_item_value(item, value)
+	if item~=nil then
 		local type_name = item.type
 
 		if type_name=="Int64Property" or type_name=="UInt64Property" or type_name=="NameProperty" then
@@ -132,6 +150,20 @@ function set_prop(inst, prop_name, value)
 			uecore.set_bool_prop_value(item.prop, item.addr, value)
 		elseif type_name=="StrProperty" then
 			write_fs(item.addr, value)
+		end
+	end
+end
+
+function set_prop(inst, prop_name, value)
+	local item = find_prop(inst, prop_name)
+	set_prop_item_value(item, value)
+end
+
+function set_param(func, buffer, param_name, value)
+	local params = get_params(func, buffer)
+	for _, param in pairs(params) do
+		if param_name==param.name then
+			set_prop_item_value(param, value)
 		end
 	end
 end

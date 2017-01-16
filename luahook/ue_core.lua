@@ -101,6 +101,28 @@ struct UStructProperty : UProperty
 	UScriptStruct* ScriptStruct;	+84
 };
 
+struct TScriptDelegate
+{
+	/** The object bound to this delegate, or nullptr if no object is bound */
+	TWeakPtr Object;
+
+	/** Name of the function to call on the bound object */
+	FName FunctionName;
+};
+
+struct TMulticastScriptDelegate
+{
+	/** Ordered list functions to invoke when the Broadcast function is called */
+	typedef TArray< TScriptDelegate<TWeakPtr> > FInvocationList;
+	mutable FInvocationList InvocationList;		// Mutable so that we can housekeep list even with 'const' broadcasts
+};
+
+struct FWeakObjectPtr
+{
+	int32		ObjectIndex;
+	int32		ObjectSerialNumber;
+};
+
 struct FUObjectItem
 {
 	// Pointer to the allocated object
@@ -133,6 +155,8 @@ local offset =
 	["ByteOffset"] = 85,
 	["ByteMask"] = 86,
 	["FieldMask"] = 87,
+	["Children"] = 36,
+	["Next"] = 28,
 	["ObjObjects"] = 16
 }
 
@@ -175,6 +199,16 @@ function get_struct_props(struct)
 		prop = x.rint32(prop+offset.PropertyLinkNext)
 	end
 	
+	return result
+end
+
+function get_function_params(func)
+	local result={}
+	local cur_field = x.rint32(func+offset.Children)
+	while (cur_field~=0) do
+		table.insert(result, cur_field)
+		cur_field = x.rint32(cur_field+offset.Next)
+	end
 	return result
 end
 
