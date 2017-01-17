@@ -22,6 +22,7 @@ SignInSystem = SignInSystem or nil
 LogicSession = LogicSession or nil
 ActivitySystem = ActivitySystem or nil
 Attacker = Attacker or nil
+Weapon = Weapon or nil
 
 function my_send(a1, a2, a3, a4)
 	GSBaseClient = a1
@@ -113,6 +114,7 @@ function my_start_reload(a1, a2)
 		print(prop.name..":"..prop.value)
 	end
 	--]]
+	Weapon = a1
 	print("---------------------")
 	ue.set_prop(a1, "InstantConfig.HitHeadScale", 1)
 	local damage_hit_prop = ue.find_prop(a1, "InstantConfig.HitHeadScale")
@@ -151,3 +153,9 @@ x.hook(playercontroller_beginplay, "my_playercontroller_beginplay")
 x.hook(start_reload, "my_start_reload")
 x.hook(moveto, "my_moveto")
 x.hook(actor_rpc, "my_actor_rpc")
+
+if Weapon then
+	print("----------")
+	local props = ue.get_props(Weapon)
+	print(#props)
+end

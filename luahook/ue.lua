@@ -61,13 +61,23 @@ function decode_prop(addr, prop, prefix, postfix, result)
 			item.value = uecore.get_bool_prop_value(prop, item.addr)
 			table.insert(result, item)
 		elseif type_name=="DelegateProperty" then
-			item.value = item.addr			-- addr = TScriptDelegate
+			local value = {}
+			value.object=x.rint32(item.addr)
+			value.funcname = uecore.get_fname_name(item.addr+4)
+			item.value = value
 			table.insert(result, item)
 		elseif type_name=="MulticastDelegateProperty" then
-			item.value = item.addr			-- addr = TMulticastScriptDelegate
+			local value = {}
+			value.allocaddr = x.rint32(item.addr)
+			value.num = x.rint32(item.addr+4)
+			value.max = x.rint32(item.addr+8)
+			item.value = item.addr
 			table.insert(result, item)
 		elseif type_name=="WeakObjectProperty" then
-			item.value = item.addr			-- addr = FWeakObjectPtr
+			local value = {}
+			value.index = x.rint32(item.addr)
+			value.serialnum = x.rint32(item.addr+4)
+			item.value = value
 			table.insert(result, item)
 		elseif type_name=="StrProperty" then
 			local fs = read_fs(item.addr)
@@ -88,7 +98,7 @@ function decode_prop(addr, prop, prefix, postfix, result)
 		elseif type_name=="StructProperty" then
 			func_decode_struct(item.addr, uecore.get_prop_struct(prop), item.name..".", nil, result)
 		else
-			--print("undecode "..item.name..":"..item.type)
+			print("undecode "..item.name..":"..item.type)
 			item=nil
 		end
 	end
