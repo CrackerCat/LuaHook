@@ -156,12 +156,13 @@ local offset =
 	["ByteMask"] = 86,
 	["FieldMask"] = 87,
 	["Children"] = 36,
-	["Next"] = 28,
-	["ObjObjects"] = 16
+	["Next"] = 28
 }
 
 local get_debug_name = x.dlsym("libUE4.so", "_Z10DebugFNameR5FName")
 local gobj_array = x.dlsym("libUE4.so", "GUObjectArray")
+local get_obj_array = x.dlsym("libUE4.so", "_Z15GetUObjectArrayv")
+local get_objs_for_debug = x.dlsym("libUE4.so", "_ZN13FUObjectArray33GetObjectArrayForDebugVisualizersEv")
 
 function get_fname_name(fname_addr)
 	wchar_name_addr = x.call(get_debug_name, fname_addr)
@@ -214,17 +215,31 @@ end
 
 function foreach_obj(callback)
 	if gobj_array~=0 then
-		local objs_start_addr = x.rint32(gobj_array+offset.ObjObjects)
-		local objs_count = x.rint32(gobj_array+offset.ObjObjects+8)
+		local objs_array_addr = x.call(get_objs_for_debug, gobj_array)
+		local objs_alloc_addr = x.rint32(objs_array_addr)
+		local objs_count = x.rint32(objs_array_addr+8)
 		for i=0, objs_count-1 do
 			local obj_item_addr =  objs_start_addr + 16*i
 			local obj = x.rint32(obj_item_addr)
 			if obj~=0 then
-				if not callback(obj) then
-					return
-				end
+				if not callback(obj) then return end
 			end
 		end
+	elseif get_obj_array~=0 and get_objs_for_debug~=0 then
+		local objs_array_chunk_addr = x.call(get_objs_for_debug, x.call(get_obj_array))
+		local objs_alloc_addr = 0
+		repeat 
+			objs_alloc_addr = x.rint32(objs_array_chunk_addr)
+			if objs_alloc_addr~=0 then
+				for i=0, 4095, 1 do
+					local obj = x.rint32(objs_alloc_addr+i*4)
+					if obj~=0 then
+						if not callback(obj) then return end
+					end
+				end
+			end
+			objs_array_chunk_addr = objs_array_chunk_addr + 4
+		until(objs_alloc_addr==0)
 	end
 end
 
@@ -246,7 +261,7 @@ end
 function find_class_by_name(class_name)
 	local result = nil
 	
-	function judge_obj_is_class_of(obj)
+	function judge_obj_is_class(obj)
 		local type_name = get_obj_type_name(obj)
 		if type_name=="Class" or type_name=="BlueprintGeneratedClass" then
 			local obj_name = get_obj_name(obj)
@@ -258,7 +273,35 @@ function find_class_by_name(class_name)
 		return true
 	end
 	
-	foreach_obj(judge_obj_is_class_of)
+	foreach_obj(judge_obj_is_class)
+	return result
+end
+
+function get_all_obj()
+	local result={}
+	
+	function enum_obj(obj)
+		table.insert(result, obj)
+		return true
+	end
+	
+	foreach_obj(enum_obj)
+	return result
+end
+
+function get_all_class()
+	local result={}
+	
+	function enum_obj(obj)
+		local type_name = get_obj_type_name(obj)
+		if type_name=="Class" or type_name=="BlueprintGeneratedClass" then
+			table.insert(result, obj)
+		end
+		
+		return true
+	end
+	
+	foreach_obj(enum_obj)
 	return result
 end
 

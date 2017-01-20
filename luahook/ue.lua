@@ -182,9 +182,19 @@ function get_inst(class)
 	return uecore.get_class_inst(class)
 end
 
+function get_objs()
+	return uecore.get_all_obj()
+end
+
+
+function get_classes()
+	return uecore.get_all_class()
+end
+
 function nameof(obj)
 	return uecore.get_obj_name(obj)
 end
+
 
 function typeof(obj)
 	return uecore.get_obj_type(obj)
