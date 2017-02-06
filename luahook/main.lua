@@ -15,5 +15,25 @@ end
 
 x.hook(actor_rpc, "my_actor_rpc")
 
+--[[
 local classes = ue.get_classes()
-print(#classes)
+for _, class in pairs(classes) do
+	print(ue.nameof(class))
+end
+--]]
+
+
+print("-----------------")
+local class_localplayer=ue.find_class("HTSkillParts")
+local inst_localplayer = ue.get_inst(class_localplayer)
+for _, inst in pairs(inst_localplayer) do
+	print("inst "..ue.nameof(inst))
+	if ue.nameof(inst)=="HTSkillParts_0" then
+		local ctrl = ue.find_prop(inst, "BattleModeControl")
+		print(ctrl.name)
+		local props = ue.get_props(ctrl.value)
+		for _, prop in pairs(props) do
+			print(prop.type.."->"..prop.name..":"..prop.value)
+		end
+	end
+end

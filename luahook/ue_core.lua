@@ -40,7 +40,7 @@ struct UProperty : UField
 	uint64_t	PropertyFlags;		+40
 	int			RepIndex;			+48
 	FName		RepNotifyFunc;		+52
-	int			Unknow;				+60
+	int			Unknow;				+60			// 官方自带是不包含这个字段的，某游戏这里多一个。。。
 	int			Offset_Internal;	+64
 	/** In memory only: Linked list of properties from most-derived to base **/
 	UProperty*	PropertyLinkNext;	+68
@@ -140,6 +140,7 @@ local env = {}
 setmetatable(env, {__index = _G})
 _ENV = env
 
+--[[
 local offset = 
 {
 	["ClassPrivate"] = 12,
@@ -155,6 +156,26 @@ local offset =
 	["ByteOffset"] = 85,
 	["ByteMask"] = 86,
 	["FieldMask"] = 87,
+	["Children"] = 36,
+	["Next"] = 28
+}
+--]]
+
+local offset = 
+{
+	["ClassPrivate"] = 12,
+	["NamePrivate"]= 16,
+	["SuperStruct"] = 32,
+	["PropertyLink"] = 60,
+	["PropertyLinkNext"] = 68,
+	["Offset_Internal"] = 60,
+	["ScriptStruct"] = 80,
+	["Property"] = 80,
+	["ArrayDim"] = 32,
+	["ElementSize"] = 36,
+	["ByteOffset"] = 84,
+	["ByteMask"] = 85,
+	["FieldMask"] = 86,
 	["Children"] = 36,
 	["Next"] = 28
 }
