@@ -140,7 +140,7 @@ local env = {}
 setmetatable(env, {__index = _G})
 _ENV = env
 
---[[
+
 local offset = 
 {
 	["ClassPrivate"] = 12,
@@ -159,8 +159,8 @@ local offset =
 	["Children"] = 36,
 	["Next"] = 28
 }
---]]
 
+--[[
 local offset = 
 {
 	["ClassPrivate"] = 12,
@@ -179,6 +179,7 @@ local offset =
 	["Children"] = 36,
 	["Next"] = 28
 }
+--]]
 
 local get_debug_name = x.dlsym("libUE4.so", "_Z10DebugFNameR5FName")
 local gobj_array = x.dlsym("libUE4.so", "GUObjectArray")
@@ -240,7 +241,7 @@ function foreach_obj(callback)
 		local objs_alloc_addr = x.rint32(objs_array_addr)
 		local objs_count = x.rint32(objs_array_addr+8)
 		for i=0, objs_count-1 do
-			local obj_item_addr =  objs_start_addr + 16*i
+			local obj_item_addr =  objs_alloc_addr + 16*i
 			local obj = x.rint32(obj_item_addr)
 			if obj~=0 then
 				if not callback(obj) then return end

@@ -178,7 +178,7 @@ function set_param(func, buffer, param_name, value)
 	end
 end
 
-function get_inst(class)
+function get_insts(class)
 	return uecore.get_class_inst(class)
 end
 
