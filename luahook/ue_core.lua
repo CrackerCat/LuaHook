@@ -140,7 +140,7 @@ local env = {}
 setmetatable(env, {__index = _G})
 _ENV = env
 
-
+--[[
 local offset = 
 {
 	["ClassPrivate"] = 12,
@@ -159,8 +159,8 @@ local offset =
 	["Children"] = 36,
 	["Next"] = 28
 }
+--]]
 
---[[
 local offset = 
 {
 	["ClassPrivate"] = 12,
@@ -179,7 +179,7 @@ local offset =
 	["Children"] = 36,
 	["Next"] = 28
 }
---]]
+
 
 local get_debug_name = x.dlsym("libUE4.so", "_Z10DebugFNameR5FName")
 local gobj_array = x.dlsym("libUE4.so", "GUObjectArray")

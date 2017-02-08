@@ -4,3 +4,4 @@
 void hexdump(void *data, unsigned int len);
 void splitstring(char *str, char split, std::vector<char *> &ret);
 void get_self_process_name(char* name, int len);
+int advance_dlsym(const char *libname, const char *sym);

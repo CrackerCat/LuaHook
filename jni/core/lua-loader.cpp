@@ -209,15 +209,12 @@ static int lua_set_argv(lua_State *l)
 	return 1;
 }
 
-static int lua_get_addr(lua_State *l)
+static int lua_dlsym(lua_State *l)
 {
 	if (lua_gettop(l)!=2)
 		return 1;
 
-	void *p_lib = dlopen(luaL_checkstring(l, 1), RTLD_LAZY);
-	void *addr = dlsym(p_lib, luaL_checkstring(l, 2));
-	dlclose(p_lib);
-	lua_pushinteger(l, (int)addr);
+	lua_pushinteger(l, advance_dlsym(luaL_checkstring(l, 1), luaL_checkstring(l, 2)));
 	return 1;
 }
 
@@ -512,7 +509,7 @@ static const luaL_Reg XLUA[] =
 	{ "unhook", lua_unhook },
 	{ "call", lua_call_function },
 	{ "argv", lua_set_argv },
-	{ "dlsym", lua_get_addr },
+	{ "dlsym", lua_dlsym },
 	{ "dump", lua_dump },
 	{ "i2s", lua_i2s },
 	{ "s2i", lua_s2i },
@@ -547,6 +544,8 @@ int luaopen_xlua(lua_State *L)
 static void *startwork_lua(void *param)
 {
 	LOGD("startwork_lua");
+
+	sleep(1);
 
 	L = luaL_newstate();
 	if (L)
