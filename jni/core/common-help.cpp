@@ -122,7 +122,7 @@ int get_module_base(char *module_name)
 	return addr;
 }
 
-char * get_module_path(char *module_name)
+void get_module_path(char *module_name, char *module_path)
 {
 	FILE *fp;
 	long addr = 0;
@@ -136,14 +136,13 @@ char * get_module_path(char *module_name)
 			if (strstr(line, module_name)) {
 				char *path = strstr(line, "/");
 				path[strlen(path) - 1] = 0x00;
-				return path;
+				strcpy(module_path, path);
+				break;
 			}
 		}
 
 		fclose(fp);
 	}
-
-	return NULL;
 }
 
 int advance_dlsym(const char *libname, const char *find_sym_name)
@@ -160,8 +159,9 @@ int advance_dlsym(const char *libname, const char *find_sym_name)
 	if (addr==0)
 	{
 		void *buff = NULL;
+		char module_path[256] = { 0x00 };
 		int module_base = get_module_base((char *)libname);
-		char *module_path = get_module_path((char *)libname);
+		get_module_path((char *)libname, module_path);
 
 		int fd = open(module_path, O_RDONLY);
 		if (fd != -1)
